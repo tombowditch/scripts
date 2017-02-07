@@ -10,6 +10,10 @@ VERSION="1.0"
 # Set your backup locations here (folders)
 backup_locations=('/var/www' '/etc')
 
+# UNTESTED SO FAR
+exclude=n # set to 'y' to enable exclusions
+exclusions=('/var/www/somebigfolder' '/another/folder')
+
 # END CONFIG #
 
 RED='\033[0;31m'
@@ -79,6 +83,17 @@ msg "BACKUP" "Starting backups..."
 msgred "WARN" "Please do not interrupt"
 echo ""
 
+excl_list=""
+if [ exclude = "y" ]; then
+	msg "INFO" "Calculating exclusions..."
+	for excl in "${exclusions[@]}"
+	do
+		excl_list="$excl_list -x $excl "
+	done
+fi
+
+echo ""
+
 for loc in "${backup_locations[@]}"
 do
   msg "BACKUP" "Starting backup $loc"
@@ -89,7 +104,7 @@ do
   rm .yodabackup_tmp
   ZIPNAME="$HOST-$DATE-$FILENAME.zip"
   ZIPLOC="/tmp/yodabackup/$ZIPNAME"
-  zip -r "$ZIPLOC" "$loc"
+  zip -r "$ZIPLOC" "$loc" $excl_list
   msg "BACKUP" "Zipped $loc"
   msg "BACKUP" "Uploading $ZIPNAME"
   /usr/local/bin/acdcli upload -x 50 $ZIPLOC backup/$HOST/$DATE
