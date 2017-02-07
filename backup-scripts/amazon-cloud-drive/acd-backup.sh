@@ -111,7 +111,7 @@ do
 
   rm .yodabackup_tmp
   ZIPNAME="$HOST-$DATE-$FILENAME.zip"
-  ZIPLOC="/tmp/yodabackup/$ZIPNAME"
+  ZIPLOC="$TMPDIR/$ZIPNAME"
   zip $pass_arg -r "$ZIPLOC" "$loc" $excl_list
   msg "BACKUP" "Zipped $loc"
   msg "BACKUP" "Uploading $ZIPNAME"
