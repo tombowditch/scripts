@@ -88,10 +88,11 @@ echo ""
 
 excl_list=""
 if [ $exclude = "y" ]; then
+	excl_list="-x "
 	msg "INFO" "Calculating exclusions..."
 	for excl in "${exclusions[@]}"
 	do
-		excl_list="$excl_list -x $excl "
+		excl_list="$excl_list \"$excl\" "
 	done
 fi
 
