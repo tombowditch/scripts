@@ -44,6 +44,16 @@ if [[ $EUID -ne 0 ]]; then
    msgred "WARN" "You are not running this script as root; make sure you have access to all directories"
 fi
 
+if [ -f ~/.cache/acd_cli/oauth_data ]
+then
+	msg "INFO" "Valid acd_cli install found"
+else
+	echo ""
+	msgred "FATAL" "No oauth_data found - are you sure acd_cli is installed and initialized?"
+	msgred "FATAL" "Sleeping for 6 seconds..."
+	sleep 6
+fi
+
 msg "INFO" "Checking we have needed packages installed"
 pkgcheck zip
 pkgcheck tar
