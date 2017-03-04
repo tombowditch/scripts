@@ -30,7 +30,7 @@ NC='\033[0m'
 function send_tg {
 	echo "$1"
 	if [ $telegram = "y" ]; then
-		curl --header 'Content-Type: application/json' --data-binary '{"chat_id":"'"$telegram_chat_id"'","text":"'"$1"'","parse_mode":"markdown"}' --request POST https://api.telegram.org/bot${telegram_bot_token}/sendMessage >> /dev/null
+		curl --header 'Content-Type: application/json' --data-binary '{"chat_id":"'"$telegram_chat_id"'","text":"<code>'"$1"'</code>","parse_mode":"html"}' --request POST https://api.telegram.org/bot${telegram_bot_token}/sendMessage >> /dev/null
 	fi
 }
 
