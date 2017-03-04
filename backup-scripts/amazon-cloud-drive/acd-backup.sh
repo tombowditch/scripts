@@ -17,11 +17,22 @@ exclusions=('/var/www/somebigfolder' '/another/folder')
 password_protect=n # set to 'y' to enable password protection on the zip
 password="" # password to lock zip with
 
+telegram=n # set to 'y' to enable telegram messages
+telegram_chat_id=""
+telegram_bot_token=""
+
 # END CONFIG #
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
+
+function send_tg {
+	echo "$1"
+	if [ $telegram = "y" ]; then
+		curl --header 'Content-Type: application/json' --data-binary '{"chat_id":"'"$telegram_chat_id"'","text":"'"$1"'","parse_mode":"markdown"}' --request POST https://api.telegram.org/bot${telegram_bot_token}/sendMessage >> /dev/null
+	fi
+}
 
 function msg {
   echo -e "\e[38;5;3m# \e[38;5;80m$1 \e[38;5;3m> \e[38;5;82m$2\e[0m"
@@ -77,7 +88,7 @@ rm -r $TMPDIR
 mkdir -p $TMPDIR
 DATE=$(date +"%Y.%m.%d-%H:%M:%S")
 
-echo "[$DATE] [BACKUP] [INFO] Starting backup"
+send_tg "[${hostname}] [$DATE] [BACKUP] [INFO] Starting backup"
 msg "ACD" "Making needed ACD files and folders..."
 /usr/local/bin/acdcli create backup
 /usr/local/bin/acdcli create backup/$HOST
@@ -124,7 +135,7 @@ msg "INFO" "Script finished, enjoy"
 /usr/local/bin/acdcli ls backup/$HOST/$DATE
 FINISH_DATE=$(date +"%Y.%m.%d-%H:%M:%S")
 
-echo "[$FINISH_DATE] [BACKUP] [INFO] Finished backup\n $(/usr/local/bin/acdcli ls backup/$HOST/$DATE)"
+send_tg "[${hostname}] [$FINISH_DATE] [BACKUP] [INFO] Finished backup\n $(/usr/local/bin/acdcli ls backup/$HOST/$DATE)"
 
 msg "CLEANUP" "Cleaning up temporary directories"
 rm -r $TMPDIR
