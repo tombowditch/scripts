@@ -88,7 +88,7 @@ rm -r $TMPDIR
 mkdir -p $TMPDIR
 DATE=$(date +"%Y.%m.%d-%H:%M:%S")
 
-send_tg "[${hostname}] [$DATE] [BACKUP] [INFO] Starting backup"
+send_tg "[$(hostname)] [$DATE] [BACKUP] [INFO] Starting backup"
 msg "ACD" "Making needed ACD files and folders..."
 /usr/local/bin/acdcli create backup
 /usr/local/bin/acdcli create backup/$HOST
@@ -135,7 +135,7 @@ msg "INFO" "Script finished, enjoy"
 /usr/local/bin/acdcli ls backup/$HOST/$DATE
 FINISH_DATE=$(date +"%Y.%m.%d-%H:%M:%S")
 
-send_tg "[${hostname}] [$FINISH_DATE] [BACKUP] [INFO] Finished backup\n $(/usr/local/bin/acdcli ls backup/$HOST/$DATE)"
+send_tg "[$(hostname)] [$FINISH_DATE] [BACKUP] [INFO] Finished backup\n $(/usr/local/bin/acdcli ls backup/$HOST/$DATE)"
 
 msg "CLEANUP" "Cleaning up temporary directories"
 rm -r $TMPDIR
