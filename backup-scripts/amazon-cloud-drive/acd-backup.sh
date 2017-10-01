@@ -162,7 +162,12 @@ do
   # Generating name for the file
   echo "$loc" > .yodabackup_tmp
   sed -i 's/\//./g' .yodabackup_tmp
-  FILENAME=$(cat .yodabackup_tmp)
+  if [ $loc == '/' ]
+  then
+    FILENAME="ROOT"
+  else
+    FILENAME=$(cat .yodabackup_tmp)
+  fi
   rm .yodabackup_tmp
   TARNAME="$HOST-$DATE-$FILENAME.tar.gz"
   TARLOC="$TMPDIR/$TARNAME"
