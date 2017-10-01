@@ -78,7 +78,7 @@ function install_rclone {
   cp rclone.1 /usr/local/share/man/man1/
   mandb 
   msg "RCLONE INSTALL" "Installed rclone."
-  msg "RCLONE INSTALL" "If you don't already have a preexisting .rclone.conf file, run 'rclone config'"
+  msg "RCLONE INSTALL" "If you don't already have a preexisting $(rclone config file) file, run 'rclone config'"
 }
 
 #Start script
