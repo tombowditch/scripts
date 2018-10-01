@@ -12,6 +12,11 @@ google_bucket="backups"
 
 # END CONFIG #
 
+if ! [ -x "$(command -v gsutil)" ]; then
+  echo 'Error: gsutil is not installed.' >&2
+  exit 1
+fi
+
 function run_backup {
   gsutil -m rsync -e -r $1 gs://$google_bucket$1
 }
