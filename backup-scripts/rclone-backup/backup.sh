@@ -116,7 +116,7 @@ function check_rclone {
 
 check_rclone
 
-if [ -f ~/.rclone.conf ]; then
+if [ -f ~/.config/rclone/rclone.conf ]; then
 	msg "INFO" "rclone config found"
 else
 	echo ""
