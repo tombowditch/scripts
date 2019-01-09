@@ -177,7 +177,7 @@ do
   msg "BACKUP" "Tar'd $loc"
   msg "BACKUP" "Uploading $TARNAME"
 
-  $rcloneexec --stats=10s --transfers=2 --checkers=15 move $TARLOC ${rclone_destination_name}:/backup/$HOST/$DATE
+  $rcloneexec -v --stats=10s --transfers=2 --checkers=15 move $TARLOC ${rclone_destination_name}:/backup/$HOST/$DATE
   msg "BACKUP" "Uploaded $TARNAME to remote: backup/$HOST/$DATE/$TARNAME"
 done
 echo ""
