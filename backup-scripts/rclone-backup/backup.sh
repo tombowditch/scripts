@@ -1,6 +1,6 @@
 # /bin/bash
 # Backup script to any rclone remote
-# Requires rclone to be configured and installed (checks are in place) 
+# Requires rclone to be configured and installed (checks are in place)
 
 set -u
 VERSION="2.0"
@@ -32,41 +32,40 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-function send_message {
-	echo "$1"
-	if [ $telegram = "y" ]; then
-		curl --header 'Content-Type: application/json' --data-binary '{"chat_id":"'"$telegram_chat_id"'","text":"<code>'"$1"'</code>","parse_mode":"html"}' --request POST https://api.telegram.org/bot${telegram_bot_token}/sendMessage >> /dev/null
-	fi
+function send_message() {
+  echo "$1"
+  if [ $telegram = "y" ]; then
+    curl --header 'Content-Type: application/json' --data-binary '{"chat_id":"'"$telegram_chat_id"'","text":"<code>'"$1"'</code>","parse_mode":"html"}' --request POST https://api.telegram.org/bot${telegram_bot_token}/sendMessage >>/dev/null
+  fi
 
   if [ $pushover = "y" ]; then
-    curl -s --form-string "token=$pushover_app_token" --form-string "user=$pushover_user_key" --form-string "message=$1" https://api.pushover.net/1/messages.json >> /dev/null
+    curl -s --form-string "token=$pushover_app_token" --form-string "user=$pushover_user_key" --form-string "message=$1" https://api.pushover.net/1/messages.json >>/dev/null
   fi
 }
 
-function msg {
+function msg() {
   echo -e "\e[38;5;3m# \e[38;5;80m$1 \e[38;5;3m> \e[38;5;82m$2\e[0m"
 }
 
-function msgred {
+function msgred() {
   echo -e "\e[38;5;3m#$RED $1 \e[38;5;3m> \e[38;5;82m$2\e[0m"
 }
 
-function pkgcheck {
-  if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ];
-  then
+function pkgcheck() {
+  if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
     msg "PKGCHECK" "Installing $1"
-    apt-get install -y $1;
+    apt-get install -y $1
   fi
 }
 
-function redtext {
+function redtext() {
   echo -e "${RED}$1${NC}"
 }
-function greentext {
+function greentext() {
   echo -e "${GREEN}$1${NC}"
 }
 
-function install_rclone {
+function install_rclone() {
   msg "RCLONE INSTALL" "Installing rclone..."
   curl -O http://downloads.rclone.org/rclone-current-linux-amd64.zip
   unzip rclone-current-linux-amd64.zip
@@ -76,19 +75,19 @@ function install_rclone {
   chmod 755 /usr/sbin/rclone
   mkdir -p /usr/local/share/man/man1
   cp rclone.1 /usr/local/share/man/man1/
-  mandb 
+  mandb
   msg "RCLONE INSTALL" "Installed rclone."
   msg "RCLONE INSTALL" "If you don't already have a preexisting $(rclone config file) file, run 'rclone config'"
 }
 
 #Start script
 if [[ $EUID -ne 0 ]]; then
-   msgred "INFO" "You are not running this script as root; make sure you have access to all directories"
+  msgred "INFO" "You are not running this script as root; make sure you have access to all directories"
 fi
 
 rcloneexec=$(which rclone)
 
-function check_rclone {
+function check_rclone() {
   if [ -z "$rcloneexec" ]; then
     msgred "FATAL" "rclone is not installed or not found"
     if [[ $EUID -ne 0 ]]; then
@@ -117,12 +116,12 @@ function check_rclone {
 check_rclone
 
 if [ -f ~/.config/rclone/rclone.conf ]; then
-	msg "INFO" "rclone config found"
+  msg "INFO" "rclone config found"
 else
-	echo ""
-	msgred "FATAL" "No rclong config found - are you sure rclone is installed and initialized?"
-	msgred "FATAL" "Sleeping for 6 seconds..."
-	sleep 6
+  echo ""
+  msgred "FATAL" "No rclong config found - are you sure rclone is installed and initialized?"
+  msgred "FATAL" "Sleeping for 6 seconds..."
+  sleep 6
 fi
 
 msg "INFO" "Checking we have needed packages installed"
@@ -148,22 +147,19 @@ echo ""
 
 excl_list=""
 if [ $exclude == "y" ]; then
-	msg "INFO" "Calculating exclusions..."
-	for excl in "${exclusions[@]}"
-	do
-		excl_list="$excl_list --exclude=${excl} "
-	done
+  msg "INFO" "Calculating exclusions..."
+  for excl in "${exclusions[@]}"; do
+    excl_list="$excl_list --exclude=${excl} "
+  done
 fi
 
-for loc in "${backup_locations[@]}"
-do
+for loc in "${backup_locations[@]}"; do
   msg "BACKUP" "Starting backup $loc"
 
   # Generating name for the file
-  echo "$loc" > .tbbackup_tmp
+  echo "$loc" >.tbbackup_tmp
   sed -i 's/\//./g' .tbbackup_tmp
-  if [ $loc == '/' ]
-  then
+  if [ $loc == '/' ]; then
     FILENAME="ROOT"
   else
     FILENAME=$(cat .tbbackup_tmp)
